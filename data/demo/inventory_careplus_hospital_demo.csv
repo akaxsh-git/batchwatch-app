@@ -1,0 +1,61 @@
+sku,product,batch,manufacturer,qty,supplier,supplier_email
+SKU2058,Paracetamol Tablets IP 500 mg,PAK-825,Healer's Lab,44,Northgate Distributors (Demo),orders@northgate.example.com
+SKU1002,Ciprofloxacin Tablets IP 500 mg,66K122,Demo Pharma Labs,99,Northgate Distributors (Demo),orders@northgate.example.com
+SKU1026,Ibuprofen Tablets IP 400 mg,JK74451Y,Placeholder Biotech,168,Riverside Medical Supply (Demo),returns@riverside.example.com
+SKU1017,Salbutamol Inhaler,VD49574K,Demo Pharma Labs,172,Lakeview Pharma Wholesale (Demo),qa@lakeview.example.com
+SKU1046,Ibuprofen Tablets IP 400 mg,ERB-01202,Testwell Formulations,204,Riverside Medical Supply (Demo),returns@riverside.example.com
+SKU1049,Iron & Folic Acid Tablets,UX74962E,Sample Remedies,188,Northgate Distributors (Demo),orders@northgate.example.com
+SKU1040,Metformin Tablets IP 500 mg,WHT-54741,Sample Remedies,149,Northgate Distributors (Demo),orders@northgate.example.com
+SKU1033,Pantoprazole Tablets IP 40 mg,DB41726C,Sample Remedies,74,Northgate Distributors (Demo),orders@northgate.example.com
+SKU1010,Paracetamol Tablets IP 650 mg,UTV-54579,Demo Pharma Labs,20,Lakeview Pharma Wholesale (Demo),qa@lakeview.example.com
+SKU1000,Glimepiride Tablets IP 2 mg,63D439,Mockup Lifesciences,189,Lakeview Pharma Wholesale (Demo),qa@lakeview.example.com
+SKU1022,Glimepiride Tablets IP 2 mg,TCK6555,Testwell Formulations,96,Northgate Distributors (Demo),orders@northgate.example.com
+SKU2059,Azithromycin Tablets IP 250 mg,HAZT-2501,Heal (India) Laboratories Pvt. Ltd.,46,Northgate Distributors (Demo),orders@northgate.example.com
+SKU1036,Atorvastatin Tablets IP 10 mg,XY07709D,Example Healthcare Pvt. Ltd.,49,Lakeview Pharma Wholesale (Demo),qa@lakeview.example.com
+SKU1029,Omeprazole Capsules IP 20 mg,VRB-51837,Testwell Formulations,63,Northgate Distributors (Demo),orders@northgate.example.com
+SKU1008,Domperidone Tablets IP 10 mg,JVG-64032,Demo Pharma Labs,41,Northgate Distributors (Demo),orders@northgate.example.com
+SKU1054,Losartan Tablets IP 50 mg,CHU-50499,Testwell Formulations,59,Lakeview Pharma Wholesale (Demo),qa@lakeview.example.com
+SKU1031,Paracetamol Tablets IP 500 mg,XBW6277,Example Healthcare Pvt. Ltd.,72,Northgate Distributors (Demo),orders@northgate.example.com
+SKU1023,Metformin Tablets IP 500 mg,JV88302E,Testwell Formulations,180,Lakeview Pharma Wholesale (Demo),qa@lakeview.example.com
+SKU1055,Metformin Tablets IP 500 mg,PF49217A,Testwell Formulations,287,Riverside Medical Supply (Demo),returns@riverside.example.com
+SKU1030,Omeprazole Capsules IP 20 mg,XW25753T,Demo Pharma Labs,246,Northgate Distributors (Demo),orders@northgate.example.com
+SKU1019,ORS Powder IP,CPF6958,Example Healthcare Pvt. Ltd.,188,Riverside Medical Supply (Demo),returns@riverside.example.com
+SKU1052,Azithromycin Tablets IP 500 mg,21X607,Testwell Formulations,130,Northgate Distributors (Demo),orders@northgate.example.com
+SKU1045,ORS Powder IP,FUF5556,Sample Remedies,62,Riverside Medical Supply (Demo),returns@riverside.example.com
+SKU1042,Vitamin D3 Capsules,WCD8331,Testwell Formulations,279,Riverside Medical Supply (Demo),returns@riverside.example.com
+SKU1056,Ranitidine Tablets IP 150 mg,KMJ-92845,Example Healthcare Pvt. Ltd.,73,Lakeview Pharma Wholesale (Demo),qa@lakeview.example.com
+SKU1047,Losartan Tablets IP 50 mg,GRT-66697,Demo Pharma Labs,198,Northgate Distributors (Demo),orders@northgate.example.com
+SKU1043,Paracetamol Tablets IP 650 mg,40K915,Example Healthcare Pvt. Ltd.,97,Northgate Distributors (Demo),orders@northgate.example.com
+SKU1037,Omeprazole Capsules IP 20 mg,APB-16967,Testwell Formulations,160,Riverside Medical Supply (Demo),returns@riverside.example.com
+SKU1014,Atorvastatin Tablets IP 10 mg,FJN2877,Demo Pharma Labs,120,Northgate Distributors (Demo),orders@northgate.example.com
+SKU1048,Aceclofenac & Paracetamol Tablets,GCR-48919,Placeholder Biotech,147,Lakeview Pharma Wholesale (Demo),qa@lakeview.example.com
+SKU1053,Montelukast & Levocetirizine Tablets,35D904,Testwell Formulations,29,Lakeview Pharma Wholesale (Demo),qa@lakeview.example.com
+SKU1018,Vitamin D3 Capsules,FUC-25204,Mockup Lifesciences,78,Lakeview Pharma Wholesale (Demo),qa@lakeview.example.com
+SKU1041,Domperidone Tablets IP 10 mg,GG74366G,Demo Pharma Labs,161,Riverside Medical Supply (Demo),returns@riverside.example.com
+SKU1020,Iron & Folic Acid Tablets,FUC0528,Testwell Formulations,186,Lakeview Pharma Wholesale (Demo),qa@lakeview.example.com
+SKU1015,Ranitidine Tablets IP 150 mg,JJA-43096,Sample Remedies,93,Northgate Distributors (Demo),orders@northgate.example.com
+SKU1003,Pantoprazole Tablets IP 40 mg,25W025,Mockup Lifesciences,243,Lakeview Pharma Wholesale (Demo),qa@lakeview.example.com
+SKU1007,Ranitidine Tablets IP 150 mg,VMG-16244,Placeholder Biotech,238,Lakeview Pharma Wholesale (Demo),qa@lakeview.example.com
+SKU1044,Montelukast & Levocetirizine Tablets,ATV-44317,Example Healthcare Pvt. Ltd.,219,Northgate Distributors (Demo),orders@northgate.example.com
+SKU1016,Metformin Tablets IP 500 mg,31K335,Placeholder Biotech,52,Lakeview Pharma Wholesale (Demo),qa@lakeview.example.com
+SKU1001,Ranitidine Tablets IP 150 mg,DVB-75678,Demo Pharma Labs,258,Riverside Medical Supply (Demo),returns@riverside.example.com
+SKU1004,Aceclofenac & Paracetamol Tablets,WCU-68878,Sample Remedies,297,Lakeview Pharma Wholesale (Demo),qa@lakeview.example.com
+SKU1011,Vitamin D3 Capsules,YG83271U,Sample Remedies,165,Northgate Distributors (Demo),orders@northgate.example.com
+SKU1027,ORS Powder IP,YF98170G,Mockup Lifesciences,213,Lakeview Pharma Wholesale (Demo),qa@lakeview.example.com
+SKU1006,Paracetamol Tablets IP 500 mg,54V367,Demo Pharma Labs,281,Riverside Medical Supply (Demo),returns@riverside.example.com
+SKU1032,Pantoprazole Tablets IP 40 mg,52U436,Mockup Lifesciences,287,Riverside Medical Supply (Demo),returns@riverside.example.com
+SKU1024,Iron & Folic Acid Tablets,VXV2338,Sample Remedies,111,Riverside Medical Supply (Demo),returns@riverside.example.com
+SKU1021,Calcium & Vitamin D3 Tablets,60M518,Example Healthcare Pvt. Ltd.,31,Lakeview Pharma Wholesale (Demo),qa@lakeview.example.com
+SKU1039,Montelukast & Levocetirizine Tablets,GKE3659,Testwell Formulations,198,Lakeview Pharma Wholesale (Demo),qa@lakeview.example.com
+SKU1038,Losartan Tablets IP 50 mg,VHU-68917,Mockup Lifesciences,237,Riverside Medical Supply (Demo),returns@riverside.example.com
+SKU1012,Ranitidine Tablets IP 150 mg,35D159,Example Healthcare Pvt. Ltd.,260,Northgate Distributors (Demo),orders@northgate.example.com
+SKU1034,Omeprazole Capsules IP 20 mg,MEC6576,Testwell Formulations,188,Northgate Distributors (Demo),orders@northgate.example.com
+SKU1025,Omeprazole Capsules IP 20 mg,RDY2275,Sample Remedies,124,Northgate Distributors (Demo),orders@northgate.example.com
+SKU1057,Glimepiride Tablets IP 2 mg,04H519,Testwell Formulations,221,Northgate Distributors (Demo),orders@northgate.example.com
+SKU1050,Glimepiride Tablets IP 2 mg,BJT1848,Demo Pharma Labs,259,Lakeview Pharma Wholesale (Demo),qa@lakeview.example.com
+SKU1009,Cetirizine Tablets IP 10 mg,FEY-03575,Demo Pharma Labs,165,Lakeview Pharma Wholesale (Demo),qa@lakeview.example.com
+SKU1028,Glimepiride Tablets IP 2 mg,WT30375E,Testwell Formulations,266,Northgate Distributors (Demo),orders@northgate.example.com
+SKU1051,Metformin Tablets IP 500 mg,YNN-04397,Sample Remedies,157,Lakeview Pharma Wholesale (Demo),qa@lakeview.example.com
+SKU1005,Calcium & Vitamin D3 Tablets,DUY-78557,Sample Remedies,215,Lakeview Pharma Wholesale (Demo),qa@lakeview.example.com
+SKU1035,Azithromycin Tablets IP 500 mg,ANW-18858,Placeholder Biotech,104,Lakeview Pharma Wholesale (Demo),qa@lakeview.example.com
+SKU1013,Ondansetron Tablets IP 4 mg,GPP-74714,Testwell Formulations,105,Lakeview Pharma Wholesale (Demo),qa@lakeview.example.com

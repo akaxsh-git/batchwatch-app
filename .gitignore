@@ -1,0 +1,10 @@
+.env
+__pycache__/
+*.pyc
+.pytest_cache/
+data/batchwatch.db
+data/batchwatch.db-*
+data/tmp/
+.venv/
+venv/
+.DS_Store

@@ -1,0 +1,127 @@
+{
+  "1_cefixime_flagged.jpg": {
+    "printed": {
+      "brand_name": "CEFIXIME-200",
+      "generic_name": "Cefixime Tablets IP 200 mg",
+      "manufacturer": "Alkem Health Science",
+      "batch_number": "25460922",
+      "expiry_date": "Jun-2027"
+    },
+    "offline_read": {
+      "fields": {
+        "brand_name": "CEFIXIME-200",
+        "generic_name": "Cefixime Tablets IP 200 mg",
+        "manufacturer": "Alkem Health Science",
+        "batch_number": "25460922",
+        "expiry_date": "Jun-2027"
+      },
+      "confidence": {
+        "brand_name": 0.95,
+        "generic_name": 0.93,
+        "manufacturer": 0.9,
+        "batch_number": 0.94,
+        "expiry_date": 0.92
+      }
+    }
+  },
+  "2_paracetamol_clear.jpg": {
+    "printed": {
+      "brand_name": "FEVRA-500",
+      "generic_name": "Paracetamol Tablets IP 500 mg",
+      "manufacturer": "Demo Pharma Labs",
+      "batch_number": "DPL24A117",
+      "expiry_date": "Feb-2028"
+    },
+    "offline_read": {
+      "fields": {
+        "brand_name": "FEVRA-500",
+        "generic_name": "Paracetamol Tablets IP 500 mg",
+        "manufacturer": "Demo Pharma Labs",
+        "batch_number": "DPL24A117",
+        "expiry_date": "Feb-2028"
+      },
+      "confidence": {
+        "brand_name": 0.95,
+        "generic_name": 0.93,
+        "manufacturer": 0.9,
+        "batch_number": 0.94,
+        "expiry_date": 0.92
+      }
+    }
+  },
+  "3_pantoprazole_ocr_slip.jpg": {
+    "printed": {
+      "brand_name": "PANTODOM",
+      "generic_name": "Pantoprazole & Domperidone Tablets",
+      "manufacturer": "VPAM Healthcare Pvt. Ltd.",
+      "batch_number": "BCV4001DZ",
+      "expiry_date": "Jun-2026"
+    },
+    "offline_read": {
+      "fields": {
+        "brand_name": "PANTODOM",
+        "generic_name": "Pantoprazole & Domperidone Tablets",
+        "manufacturer": "VPAM Healthcare Pvt. Ltd.",
+        "batch_number": "BCV4OO1DZ",
+        "expiry_date": "Jun-2026"
+      },
+      "confidence": {
+        "brand_name": 0.95,
+        "generic_name": 0.93,
+        "manufacturer": 0.9,
+        "batch_number": 0.62,
+        "expiry_date": 0.92
+      }
+    }
+  },
+  "4_telmisartan_august.jpg": {
+    "printed": {
+      "brand_name": "TELMI-40",
+      "generic_name": "Telmisartan Tablets IP 40 mg",
+      "manufacturer": "Kerala State Drugs and Pharmaceuticals Ltd.",
+      "batch_number": "TM5145",
+      "expiry_date": "Aug-2027"
+    },
+    "offline_read": {
+      "fields": {
+        "brand_name": "TELMI-40",
+        "generic_name": "Telmisartan Tablets IP 40 mg",
+        "manufacturer": "Kerala State Drugs and Pharmaceuticals Ltd.",
+        "batch_number": "TM5145",
+        "expiry_date": "Aug-2027"
+      },
+      "confidence": {
+        "brand_name": 0.95,
+        "generic_name": 0.93,
+        "manufacturer": 0.9,
+        "batch_number": 0.94,
+        "expiry_date": 0.92
+      }
+    }
+  },
+  "5_cefixime_blurry.jpg": {
+    "printed": {
+      "brand_name": "CEFIXIME-200",
+      "generic_name": "Cefixime Tablets IP 200 mg",
+      "manufacturer": "Alkem Health Science",
+      "batch_number": "25460922",
+      "expiry_date": "Jun-2027"
+    },
+    "offline_read": {
+      "fields": {
+        "brand_name": null,
+        "generic_name": null,
+        "manufacturer": null,
+        "batch_number": null,
+        "expiry_date": null
+      },
+      "confidence": {
+        "brand_name": 0,
+        "generic_name": 0,
+        "manufacturer": 0,
+        "batch_number": 0,
+        "expiry_date": 0
+      }
+    }
+  }
+}

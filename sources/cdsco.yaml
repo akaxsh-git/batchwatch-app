@@ -1,0 +1,40 @@
+# Source adapter: CDSCO monthly drug alerts (India).
+#
+# Reusability: to support another regulator's alert list (e.g. a food-safety
+# recall list or medical-device alerts), copy this file and change the
+# file pattern and the header keywords. The parser, matcher, agent, audit log
+# and UI stay the same.
+
+name: cdsco
+regulator: Central Drugs Standard Control Organisation (CDSCO), India
+domain: Healthcare / Life Sciences
+item_label: medicine batch
+
+# Files are named YYYY-MM_<list_type>.pdf, e.g. 2026-08_state.pdf
+file_pattern: '^(?P<month>\d{4}-\d{2})_(?P<list_type>central|state|spurious)\.pdf$'
+
+list_types:
+  central: Central NSQ (CDSCO laboratories)
+  state: State NSQ (state drug-testing laboratories)
+  spurious: Spurious drugs
+
+# A header row is recognised by a cell whose letters equal one of these.
+header_marker_cells: [batchno, batch]
+
+# Map header text -> field. Checked in order; the first keyword contained in
+# the header's letters wins (so "manufacturingdate" is tested before "manufacture").
+header_keywords:
+  - [sno, [sno, sn]]
+  - [product, [name, product]]
+  - [batch, [batch]]
+  - [exp_date, [expi]]
+  - [mfg_date, [manufacturingdate]]
+  - [manufacturer, [manufacture]]
+  - [nsq_result, [nsq, result]]
+  - [reporting_source, [source]]
+  - [reporting_lab_state, [lab]]
+  - [reporting_month, [month]]
+  - [remarks, [remark]]
+
+# Citation shown to users for every flag
+citation_format: '{source_file} · S.No {sno} · page {page}'
