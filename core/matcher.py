@@ -15,6 +15,8 @@ from .parser import norm_batch
 CONFUSABLE = str.maketrans({"O": "0", "Q": "0", "D": "0", "I": "1", "L": "1",
                             "S": "5", "B": "8", "Z": "2", "G": "6"})
 NAME_AGREEMENT_MIN = 60
+# some alert rows have no real batch ("Not mentioned", "NA"); never match on those
+PLACEHOLDER_BATCHES = {"NOTMENTIONED", "NA", "NIL", "NOTAVAILABLE", "UNKNOWN", "NONE", "NOTKNOWN"}
 NEAR_MIN = 90
 
 _cache = {"key": None, "rows": [], "by_batch": {}, "by_ocr": {}}
@@ -34,6 +36,7 @@ def _load():
             """SELECT a.* FROM alerts a JOIN ingests i ON i.id=a.ingest_id
                WHERE i.status='live'""")]
     by_batch, by_ocr = {}, {}
+    rows = [r for r in rows if r["batch_norm"] not in PLACEHOLDER_BATCHES and len(r["batch_norm"]) >= 3]
     for r in rows:
         by_batch.setdefault(r["batch_norm"], []).append(r)
         by_ocr.setdefault(ocr_key(r["batch_norm"]), []).append(r)

@@ -126,6 +126,7 @@ def read_label(image_bytes: bytes, filename: str = "") -> dict:
 
 # ---------------------------------------------------------------- explain
 REASON_RULES = [
+    (r"spurious|under investigation|identification", "the product is suspected to be fake (spurious), i.e. not made by the company on the label"),
     (r"dissolution", "the tablet or capsule may not dissolve properly in the body, so the medicine may not be absorbed as intended"),
     (r"assay|content of|claim|potency", "the amount of active ingredient was not what the label claims (too little or too much)"),
     (r"microbial|aerobic|sterility|bacterial|fungal|contaminat", "the sample showed contamination with microbes, or failed a sterility test"),
@@ -135,7 +136,6 @@ REASON_RULES = [
     (r"related substances|impurit", "the sample contained more impurities than allowed"),
     (r"disintegration", "the tablet did not break down in the expected time"),
     (r"extractable volume|volume", "the container held less liquid than stated"),
-    (r"spurious|under investigation", "the product is suspected to be fake (spurious), i.e. not made by the company on the label"),
 ]
 ADVICE = ("Please speak to your pharmacist or doctor before taking more of this medicine. "
           "Don't change or stop any prescribed treatment on your own.")

@@ -31,7 +31,7 @@ def normalise_columns(df: pd.DataFrame) -> pd.DataFrame:
     return out.fillna("")
 
 
-@audited("check_inventory",
+@audited("tool:check_inventory",
          summarize_input=lambda df, **k: {"lines": len(df)},
          summarize_output=lambda r: {k: r[k] for k in ("org", "lines", "counts", "seconds")})
 def check_inventory(actor, df: pd.DataFrame) -> dict:
@@ -69,7 +69,7 @@ def get_inventory(actor) -> pd.DataFrame:
     return df
 
 
-@audited("quarantine_stock", summarize_input=lambda ids, **k: {"inventory_ids": ids})
+@audited("human:quarantine_stock", summarize_input=lambda ids, **k: {"inventory_ids": ids})
 def quarantine(actor, ids: list) -> dict:
     """Pharmacist decision: move flagged lines to quarantine (off sale)."""
     auth.require(actor, "quarantine")

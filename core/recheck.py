@@ -28,7 +28,7 @@ def recheck_all(reason: str = "scheduled") -> dict:
                 notify(recipient=None, org=item["org"], verdict=res["verdict"], ref=f"inventory:{item['id']}",
                        message=f"{item['product']} batch {item['batch']} is now {res['verdict']} "
                                f"({res['citation']}). Review and quarantine if confirmed.")
-            log({**SYSTEM, "org": item["org"]}, "recheck_inventory_item",
+            log({**SYSTEM, "org": item["org"]}, "tool:recheck_inventory_item",
                 {"item": item["id"], "batch": item["batch"], "before": item["verdict"]},
                 {"after": res["verdict"]}, verdict=res["verdict"], citation=res["citation"])
     for item in cab:
@@ -46,8 +46,8 @@ def recheck_all(reason: str = "scheduled") -> dict:
                        message=f"A medicine in your cabinet ({item['product']}, batch {item['batch']}) now "
                                f"appears in a CDSCO alert. Please speak to your pharmacist or doctor "
                                f"before taking more.")
-            log({**SYSTEM, "name": SYSTEM["name"]}, "recheck_cabinet_item",
+            log({**SYSTEM, "name": SYSTEM["name"]}, "tool:recheck_cabinet_item",
                 {"owner": item["owner"], "batch": item["batch"], "before": item["verdict"]},
                 {"after": res["verdict"]}, verdict=res["verdict"], citation=res["citation"])
-    log(SYSTEM, "monthly_recheck", {"reason": reason}, changes)
+    log(SYSTEM, "tool:monthly_recheck", {"reason": reason}, changes)
     return changes

@@ -38,7 +38,7 @@ def scan_inbox(source="cdsco") -> list:
                   if re.match(cfg["file_pattern"], p.name) and p.name not in seen)
 
 
-@audited("ingest_alert_file", summarize_input=lambda path, **k: {"file": Path(path).name},
+@audited("tool:ingest_alert_file", summarize_input=lambda path, **k: {"file": Path(path).name},
          summarize_output=lambda r: {k: r[k] for k in ("ingest_id", "rows", "validation", "status")})
 def ingest_file(actor, path, source="cdsco") -> dict:
     auth.require(actor, "ingest_alerts")
@@ -82,7 +82,7 @@ def list_ingests(status=None) -> list:
         return [dict(r) for r in con.execute(q, p)]
 
 
-@audited("approve_alert_data", summarize_input=lambda ingest_id, **k: {"ingest_id": ingest_id})
+@audited("human:approve_alert_data", summarize_input=lambda ingest_id, **k: {"ingest_id": ingest_id})
 def approve(actor, ingest_id: int, run_recheck=True) -> dict:
     """Human gate: an admin must approve new alert data before it is used."""
     auth.require(actor, "approve_ingest")
@@ -108,7 +108,7 @@ def approve(actor, ingest_id: int, run_recheck=True) -> dict:
     return {"ingest_id": ingest_id, "status": "live", "recheck": summary}
 
 
-@audited("reject_alert_data", summarize_input=lambda ingest_id, reason="", **k: {"ingest_id": ingest_id, "reason": reason})
+@audited("human:reject_alert_data", summarize_input=lambda ingest_id, reason="", **k: {"ingest_id": ingest_id, "reason": reason})
 def reject(actor, ingest_id: int, reason: str = "") -> dict:
     auth.require(actor, "approve_ingest")
     with session() as con:

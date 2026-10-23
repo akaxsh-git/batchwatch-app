@@ -8,7 +8,7 @@ from .db import session
 from .notify import send_email
 
 
-@audited("create_draft", summarize_input=lambda kind, recipient, subject, body, items, **k:
+@audited("tool:create_draft", summarize_input=lambda kind, recipient, subject, body, items, **k:
          {"kind": kind, "recipient": recipient, "subject": subject, "items": len(items or [])})
 def create_draft(actor, kind, recipient, subject, body, items) -> dict:
     auth.require(actor, "draft_supplier_return" if kind == "supplier_return" else "draft_controller_report")
@@ -34,7 +34,7 @@ def list_actions(actor, status=None) -> list:
         return [dict(r) for r in con.execute(q + " ORDER BY id DESC", p)]
 
 
-@audited("decide_draft", summarize_input=lambda action_id, approve, body=None, **k:
+@audited("human:decide_draft", summarize_input=lambda action_id, approve, body=None, **k:
          {"action_id": action_id, "approve": approve, "edited": body is not None})
 def decide(actor, action_id: int, approve: bool, body: str = None) -> dict:
     """Human gate: approve (send) or reject a draft. Only its owner/org may decide."""
