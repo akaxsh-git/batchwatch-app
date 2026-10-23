@@ -41,6 +41,7 @@ streamlit run app.py                # opens http://localhost:8501
 **Gemini key (optional).** Get one free at [aistudio.google.com](https://aistudio.google.com) and set `GEMINI_API_KEY` in `.env`. Without a key, the app runs in **offline fallback mode**: demo labels are read from `data/demo/labels/labels.json`, other photos via Tesseract OCR if installed (`brew install tesseract`), or by typing the batch number. Explanations and drafts use rule-based templates. Everything else is identical. Set `BATCHWATCH_OFFLINE=1` to force this mode (e.g. bad Wi-Fi during a demo).
 
 **Reset the demo** at any time: `python scripts/setup_demo.py --reset` (puts the August files back in the inbox).
+Approving files moves them from `data/inbox/` to `data/alerts/`, so **run the reset before every demo and before your final commit**, then check `git status` is clean.
 
 ---
 
