@@ -126,7 +126,7 @@ with tab_browse:
             ]
 
         if not rows:
-            ui.empty_state("🔍", f"No live alerts found matching "{browse_query.strip()}".")
+            ui.empty_state("🔍", f"No live alerts found matching '{browse_query.strip()}'.")
         else:
             st.caption(
                 f"Found **{len(rows)}** alert row(s) matching your query "
