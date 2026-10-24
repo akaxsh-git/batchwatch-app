@@ -159,6 +159,9 @@ def get_clear_details(lang: str = "en") -> str:
     return lang_dict.get("clear_details", VERDICT_EXPLANATIONS["en"]["clear_details"])
 
 
+_translation_cache: dict = {}
+
+
 def translate_explanation(row: dict, en_explanation: dict, lang: str = "en") -> dict:
     """Translate an alert explanation to Hindi or Kannada.
 
@@ -166,6 +169,9 @@ def translate_explanation(row: dict, en_explanation: dict, lang: str = "en") -> 
     If Gemini is available, generates a patient-friendly explanation in the target
     language grounded strictly in the row facts.
     If Gemini is offline/unavailable, falls back to English with an explanatory notice.
+
+    Results are cached by alert attributes and target language to prevent
+    wasting Gemini API quota on Streamlit re-renders.
     """
     if not lang or lang == "en":
         return {
@@ -177,6 +183,10 @@ def translate_explanation(row: dict, en_explanation: dict, lang: str = "en") -> 
             "notice": "",
             "disclaimer": "",
         }
+
+    cache_key = (str(row.get("batch")), str(row.get("alert_month")), str(row.get("list_type")), lang)
+    if cache_key in _translation_cache:
+        return _translation_cache[cache_key]
 
     lang_name = "Hindi (हिन्दी)" if lang == "hi" else "Kannada (ಕನ್ನಡ)" if lang == "kn" else lang
     disclaimer = MACHINE_TRANSLATION_NOTE.get(lang, MACHINE_TRANSLATION_NOTE["hi"])
@@ -196,7 +206,7 @@ Remarks: {row.get('remarks') or '-'}"""
         try:
             text = llm._gemini_text(prompt)
             if text and not _BANNED.search(text):
-                return {
+                res = {
                     "text": text,
                     "advice": curated_advice,
                     "lang": lang,
@@ -205,12 +215,14 @@ Remarks: {row.get('remarks') or '-'}"""
                     "notice": "",
                     "disclaimer": disclaimer,
                 }
+                _translation_cache[cache_key] = res
+                return res
         except Exception:
             pass
 
     # Fallback to English when Gemini is unavailable or fails
     notice = OFFLINE_NOTICE.get(lang, "[Translation unavailable. Showing English.]")
-    return {
+    res = {
         "text": en_explanation.get("text", ""),
         "advice": en_explanation.get("advice", VERDICT_EXPLANATIONS["en"]["advice"]),
         "lang": "en",
@@ -219,3 +231,5 @@ Remarks: {row.get('remarks') or '-'}"""
         "notice": notice,
         "disclaimer": disclaimer,
     }
+    _translation_cache[cache_key] = res
+    return res

@@ -131,8 +131,22 @@ def _tesseract(image_bytes: bytes):
     return r
 
 
+_label_cache: dict = {}
+_explain_cache: dict = {}
+
+
 def read_label(image_bytes: bytes, filename: str = "") -> dict:
-    """Return {"fields": {...}, "confidence": {...}, "source": str, "note": str|None}."""
+    """Return {"fields": {...}, "confidence": {...}, "source": str, "note": str|None}.
+
+    Caches results by image SHA-256 digest to prevent duplicate Gemini API calls
+    when the same strip or photo is re-scanned or re-rendered.
+    """
+    digest = hashlib.sha256(image_bytes).hexdigest()
+    if digest in _label_cache:
+        cached = dict(_label_cache[digest])
+        cached["source"] = f"{cached['source']} (cached)"
+        return cached
+
     if mode() == "gemini":
         try:
             from google.genai import types
@@ -140,7 +154,9 @@ def read_label(image_bytes: bytes, filename: str = "") -> dict:
             data = _gemini_json([part, LABEL_PROMPT], "label")
             fields = {k: (data.get("fields") or {}).get(k) for k in _FIELDS}
             conf = {k: float((data.get("confidence") or {}).get(k) or 0) for k in _FIELDS}
-            return {"fields": fields, "confidence": conf, "source": f"gemini ({MODEL})", "note": None}
+            res = {"fields": fields, "confidence": conf, "source": f"gemini ({MODEL})", "note": None}
+            _label_cache[digest] = res
+            return res
         except Exception as e:  # API down / quota: fall back, and say so
             fb = _demo_lookup(image_bytes, filename) or _tesseract(image_bytes) or _empty_read("none")
             fb["note"] = f"Gemini unavailable ({type(e).__name__}); used fallback reader"
@@ -176,7 +192,14 @@ def _rule_explain(row: dict) -> str:
 
 
 def explain_alert(row: dict) -> dict:
-    """Plain-language explanation grounded ONLY in the cited alert row."""
+    """Plain-language explanation grounded ONLY in the cited alert row.
+
+    Caches results by alert row attributes to save Gemini quota on repeated views.
+    """
+    cache_key = (str(row.get("batch")), str(row.get("alert_month")), str(row.get("list_type")))
+    if cache_key in _explain_cache:
+        return _explain_cache[cache_key]
+
     if mode() == "gemini":
         prompt = f"""Explain this official drug-quality alert to a patient in 2-3 short, calm sentences.
 Use ONLY the facts below. Do not add facts, do not give medical advice, do not say whether to stop or
@@ -191,10 +214,14 @@ Remarks: {row.get('remarks') or '-'}"""
         try:
             text = _gemini_text(prompt)
             if text and not _BANNED.search(text):
-                return {"text": text, "advice": ADVICE, "source": f"gemini ({MODEL})"}
+                res = {"text": text, "advice": ADVICE, "source": f"gemini ({MODEL})"}
+                _explain_cache[cache_key] = res
+                return res
         except Exception:
             pass
-    return {"text": _rule_explain(row), "advice": ADVICE, "source": "rule-based (offline)"}
+    res = {"text": _rule_explain(row), "advice": ADVICE, "source": "rule-based (offline)"}
+    _explain_cache[cache_key] = res
+    return res
 
 
 # ---------------------------------------------------------------- drafts
