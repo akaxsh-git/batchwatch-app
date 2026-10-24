@@ -23,7 +23,7 @@ from dotenv import load_dotenv
 from core.paths import DEMO_DIR
 
 load_dotenv()
-MODEL = os.getenv("GEMINI_MODEL", "gemini-2.5-flash")
+MODEL = os.getenv("GEMINI_MODEL", "gemini-3-flash-preview")
 _FIELDS = ["brand_name", "generic_name", "manufacturer", "batch_number", "expiry_date"]
 _BANNED = re.compile(r"\b(stop taking|safe to (take|use)|dose|dosage|you should take|discontinue)\b", re.I)
 
@@ -36,7 +36,10 @@ def mode() -> str:
 
 def _client():
     from google import genai
-    return genai.Client()
+    c = globals().get("_CLIENT")
+    if c is None:
+        c = globals()["_CLIENT"] = genai.Client(http_options={"timeout": 25000})
+    return c
 
 
 def _gemini_json(parts, schema_hint: str) -> dict:
@@ -106,12 +109,26 @@ def _tesseract(image_bytes: bytes):
     return r
 
 
+def _shrink(image_bytes: bytes, max_side: int = 1280) -> bytes:
+    """Downscale big phone photos before upload: faster, and less data leaves the device."""
+    try:
+        import io
+        from PIL import Image, ImageOps
+        im = ImageOps.exif_transpose(Image.open(io.BytesIO(image_bytes))).convert("RGB")
+        im.thumbnail((max_side, max_side))
+        buf = io.BytesIO()
+        im.save(buf, "JPEG", quality=88)
+        return buf.getvalue()
+    except Exception:
+        return image_bytes
+
+
 def read_label(image_bytes: bytes, filename: str = "") -> dict:
     """Return {"fields": {...}, "confidence": {...}, "source": str, "note": str|None}."""
     if mode() == "gemini":
         try:
             from google.genai import types
-            part = types.Part.from_bytes(data=image_bytes, mime_type="image/jpeg" if not filename.lower().endswith(".png") else "image/png")
+            part = types.Part.from_bytes(data=_shrink(image_bytes), mime_type="image/jpeg")
             data = _gemini_json([part, LABEL_PROMPT], "label")
             fields = {k: (data.get("fields") or {}).get(k) for k in _FIELDS}
             conf = {k: float((data.get("confidence") or {}).get(k) or 0) for k in _FIELDS}
