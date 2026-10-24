@@ -45,6 +45,27 @@ Approving files moves them from `data/inbox/` to `data/alerts/`, so **run the re
 
 ---
 
+## Deployment (Streamlit Community Cloud)
+
+BatchWatch is fully prepared for one-click deployment on [Streamlit Community Cloud](https://share.streamlit.io):
+
+1. **Push your repository to GitHub** (keep your `.env` ignored; never commit keys).
+2. Go to **[share.streamlit.io](https://share.streamlit.io)** and click **New app**.
+3. Configure the app settings:
+   - **Repository**: `your-username/batchwatch-app`
+   - **Branch**: `main` (or `design-polish`)
+   - **Main file path**: `app.py`
+4. Expand **Advanced settings** $\rightarrow$ **Secrets**, and enter your Gemini API key:
+   ```toml
+   GEMINI_API_KEY = "your-gemini-api-key"
+   GEMINI_MODEL = "gemini-2.5-flash"
+   ```
+5. Click **Deploy!**
+   - **Zero manual database setup**: On first launch, `ui.ensure_db()` automatically bootstraps the database from bundled CDSCO alert PDFs and seeds the demo users.
+   - If the API key secret is omitted, the app automatically operates in offline fallback mode with deterministic rule-based explanations.
+
+---
+
 ## 5-minute demo script
 
 Switch users with **"Signed in as (demo)"** in the sidebar. Each role sees different pages.
@@ -102,6 +123,7 @@ CDSCO tables are drawn as shaded cell rectangles. The parser groups rectangles s
 | **Human approval** | Admin approves new data · user confirms the batch read · POSSIBLE needs a person · returns and reports sent only after approval |
 | **Audit trail** | `audit_log` table: every tool call, AI reading, human decision, re-check and denied attempt. Exportable CSV |
 | **Role-based access** | `core/auth.py`, enforced in the backend: admin / pharmacist (own org only) / household (own data only) / system |
+| **Authentication note** | Landing page role picker is for demonstration; production deployments require enterprise SSO (OAuth 2.0 / SAML) or hashed credentials. Backend RBAC is strictly enforced. |
 | **Privacy & security** | Only the label image goes to the LLM (no names or inventories); photos dropped after reading; keys only in `.env` (git-ignored). Production: Gemini paid tier, where inputs aren't used for training |
 | **Fail-safe wording** | "Not in published alerts", never "safe"; "speak to your pharmacist or doctor", never "stop taking"; LLM output containing dosing or stop/continue advice is replaced by the rule-based text |
 
