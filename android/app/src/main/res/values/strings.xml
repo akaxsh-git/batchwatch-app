@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">BatchWatch</string>
+    <string name="notification_channel_name">Medicine Alert Updates</string>
+    <string name="notification_channel_desc">Alerts when a saved medicine is flagged in published CDSCO reports</string>
+</resources>
