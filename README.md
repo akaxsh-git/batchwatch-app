@@ -45,6 +45,27 @@ Approving files moves them from `data/inbox/` to `data/alerts/`, so **run the re
 
 ---
 
+## Deployment (Streamlit Community Cloud)
+
+BatchWatch is fully prepared for one-click deployment on [Streamlit Community Cloud](https://share.streamlit.io):
+
+1. **Push your repository to GitHub** (keep your `.env` ignored; never commit keys).
+2. Go to **[share.streamlit.io](https://share.streamlit.io)** and click **New app**.
+3. Configure the app settings:
+   - **Repository**: `your-username/batchwatch-app`
+   - **Branch**: `main` (or `design-polish`)
+   - **Main file path**: `app.py`
+4. Expand **Advanced settings** $\rightarrow$ **Secrets**, and enter your Gemini API key:
+   ```toml
+   GEMINI_API_KEY = "your-gemini-api-key"
+   GEMINI_MODEL = "gemini-2.5-flash"
+   ```
+5. Click **Deploy!**
+   - **Zero manual database setup**: On first launch, `ui.ensure_db()` automatically bootstraps the database from bundled CDSCO alert PDFs and seeds the demo users.
+   - If the API key secret is omitted, the app automatically operates in offline fallback mode with deterministic rule-based explanations.
+
+---
+
 ## 5-minute demo script
 
 Switch users with **"Signed in as (demo)"** in the sidebar. Each role sees different pages.

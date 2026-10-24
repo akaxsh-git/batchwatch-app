@@ -1,4 +1,4 @@
-"""Tests for multilingual explanations and offline fallback behavior."""
+"""Tests for multilingual explanations, localized UI, and offline fallback behavior."""
 import os
 import re
 
@@ -34,13 +34,12 @@ def test_english_translation_returns_original():
 
 
 def test_offline_fallback_hindi():
-    # Force offline mode to test fallback
     os.environ["BATCHWATCH_OFFLINE"] = "1"
     try:
         res = translate.translate_explanation(DUMMY_ROW, EN_EXPL, lang="hi")
         assert res["fallback"] is True
         assert res["text"] == EN_EXPL["text"]
-        assert "अनुवाद अनुपलब्ध" in res["notice"]
+        assert "ऑफ़लाइन मोड" in res["notice"] or "अनुवाद अनुपलब्ध" in res["notice"]
         assert "सूचना" in res["disclaimer"]
     finally:
         os.environ.pop("BATCHWATCH_OFFLINE", None)
@@ -52,7 +51,7 @@ def test_offline_fallback_kannada():
         res = translate.translate_explanation(DUMMY_ROW, EN_EXPL, lang="kn")
         assert res["fallback"] is True
         assert res["text"] == EN_EXPL["text"]
-        assert "ಅನುವಾದ ಲಭ್ಯವಿಲ್ಲ" in res["notice"]
+        assert "ಆಫ್‌ಲೈನ್ ಮೋಡ್" in res["notice"] or "ಅನುವಾದ ಲಭ್ಯವಿಲ್ಲ" in res["notice"]
         assert "ಸೂಚನೆ" in res["disclaimer"]
     finally:
         os.environ.pop("BATCHWATCH_OFFLINE", None)
@@ -66,6 +65,21 @@ def test_verdict_summaries_in_all_languages():
             assert len(summary) > 10
 
 
+def test_card_titles_in_all_languages():
+    for lang in ("en", "hi", "kn"):
+        for v in ("FLAGGED", "POSSIBLE", "CLEAR", "RETAKE"):
+            title = translate.get_card_title(v, lang=lang)
+            assert title, f"Card title missing for {v} in {lang}"
+            assert len(title) > 5
+
+
+def test_ui_strings_in_all_languages():
+    for lang in ("en", "hi", "kn"):
+        for key in ("scan_title", "btn_confirm", "cabinet_title"):
+            val = translate.get_ui_string(key, lang=lang)
+            assert val, f"UI string missing for {key} in {lang}"
+
+
 def test_no_banned_safety_claims():
     banned_pattern = re.compile(r"\b(safe to (take|use)|stop taking|dosage)\b", re.I)
     for lang in ("en", "hi", "kn"):
@@ -75,8 +89,6 @@ def test_no_banned_safety_claims():
 
 
 def test_deterministic_matcher_unaffected_by_language():
-    # Match decision logic in matcher must remain purely deterministic
     res = matcher.match("25460922")
     assert res["verdict"] in ("FLAGGED", "POSSIBLE", "CLEAR", "RETAKE")
-    # Verdict keys themselves remain in English
     assert res["verdict"] == "FLAGGED"

@@ -28,15 +28,37 @@ LANGUAGES = {
 # Machine-generated translation disclaimer
 MACHINE_TRANSLATION_NOTE = {
     "en": "",
-    "hi": "सूचना: यह अनुवाद मशीन द्वारा तैयार किया गया है और इसे किसी मूल वक्ता द्वारा सत्यापित किया जाना चाहिए।",
-    "kn": "ಸೂಚನೆ: ಈ ಅನುವಾದವು ಯಂತ್ರ-ರಚಿತವಾಗಿದೆ ಮತ್ತು ಸ್ಥಳೀಯ ಭಾಷಿಕರಿಂದ ಪರಿಶೀಲಿಸಲ್ಪಡಬೇಕು.",
+    "hi": "सूचना: यह व्याख्या मशीन द्वारा अनुवादित है और इसे किसी मूल वक्ता द्वारा सत्यापित किया जाना चाहिए।",
+    "kn": "ಸೂಚನೆ: ಈ ವಿವರಣೆಯು ಯಂತ್ರ-ರಚಿತ ಅನುವಾದವಾಗಿದೆ ಮತ್ತು ಸ್ಥಳೀಯ ಭಾಷಿಕರಿಂದ ಪರಿಶೀಲಿಸಲ್ಪಡಬೇಕು.",
 }
 
 # Fallback notice when offline or translation fails
 OFFLINE_NOTICE = {
     "en": "",
-    "hi": "[अनुवाद अनुपलब्ध — ऑफ़लाइन मोड। अंग्रेजी में विवरण दिखाया जा रहा है।]",
-    "kn": "[ಅನುವಾದ ಲಭ್ಯವಿಲ್ಲ — ಆಫ್‌ಲೈನ್ ಮೋಡ್. ವಿವರಣೆಯನ್ನು ಇಂಗ್ಲಿಷ್‌ನಲ್ಲಿ ತೋರಿಸಲಾಗುತ್ತಿದೆ.]",
+    "hi": "ऑफ़लाइन मोड: AI अनुवादक अनुपलब्ध होने के कारण विवरण अंग्रेजी में दिखाया जा रहा है।",
+    "kn": "ಆಫ್‌ಲೈನ್ ಮೋಡ್: AI ಅನುವಾದಕ ಲಭ್ಯವಿಲ್ಲದ ಕಾರಣ ವಿವರಣೆಯನ್ನು ಇಂಗ್ಲಿಷ್‌ನಲ್ಲಿ ತೋರಿಸಲಾಗುತ್ತಿದೆ.",
+}
+
+# Card heading titles translated across languages
+CARD_TITLES = {
+    "en": {
+        "FLAGGED": "This batch appears in a published CDSCO drug-quality alert",
+        "POSSIBLE": "Possible match — please check the batch number on the pack",
+        "CLEAR": "Not found in published CDSCO alerts",
+        "RETAKE": "Batch number could not be read",
+    },
+    "hi": {
+        "FLAGGED": "यह बैच प्रकाशित CDSCO दवा-गुणवत्ता अलर्ट में पाया गया है",
+        "POSSIBLE": "संभावित मिलान — कृपया दवा पैक पर बैच नंबर की जांच करें",
+        "CLEAR": "प्रकाशित CDSCO अलर्ट में नहीं मिला",
+        "RETAKE": "बैच नंबर पढ़ा नहीं जा सका",
+    },
+    "kn": {
+        "FLAGGED": "ಈ ಬ್ಯಾಚ್ ಪ್ರಕಟಿತ CDSCO ಔಷಧಿ-ಗುಣಮಟ್ಟದ ಎಚ್ಚರಿಕೆಯಲ್ಲಿ ಕಂಡುಬಂದಿದೆ",
+        "POSSIBLE": "ಸಂಭವನೀಯ ಹೊಂದಾಣಿಕೆ — ದಯವಿಟ್ಟು ಪ್ಯಾಕ್‌ನಲ್ಲಿರುವ ಬ್ಯಾಚ್ ಸಂಖ್ಯೆಯನ್ನು ಪರಿಶೀಲಿಸಿ",
+        "CLEAR": "ಪ್ರಕಟಿತ CDSCO ಎಚ್ಚರಿಕೆಗಳಲ್ಲಿ ಕಂಡುಬಂದಿಲ್ಲ",
+        "RETAKE": "ಬ್ಯಾಚ್ ಸಂಖ್ಯೆಯನ್ನು ಓದಲು ಸಾಧ್ಯವಾಗಲಿಲ್ಲ",
+    },
 }
 
 # Curated UI explanatory messages per verdict (deterministic, safe)
@@ -67,7 +89,62 @@ VERDICT_EXPLANATIONS = {
     },
 }
 
+# Localized UI chrome strings for Household Scan workflow
+UI_STRINGS = {
+    "en": {
+        "scan_title": "Scan a medicine",
+        "scan_caption": "Photograph the side of the strip or carton that shows the batch number (B.No.). Only the photo is sent to the AI, never your name, and it is discarded after reading.",
+        "tab_camera": "📷 Camera",
+        "tab_upload": "⬆️ Upload photo",
+        "tab_demo": "🧪 Demo labels",
+        "step_confirm_title": "Step 1 · Confirm what the AI read",
+        "btn_confirm": "Confirm and check",
+        "btn_retake": "Retake photo",
+        "cabinet_title": "My medicine cabinet",
+        "cabinet_empty": "Nothing saved yet. Scan a medicine above to add it to your cabinet.",
+        "scan_another": "Scan another medicine",
+    },
+    "hi": {
+        "scan_title": "दवा स्कैन करें",
+        "scan_caption": "दवा की स्ट्रिप या डिब्बे के उस हिस्से की तस्वीर लें जहां बैच नंबर (B.No.) लिखा है। केवल फोटो AI को भेजी जाती है, आपका नाम कभी नहीं, और पढ़ने के तुरंत बाद इसे हटा दिया जाता है।",
+        "tab_camera": "📷 कैमरा",
+        "tab_upload": "⬆️ फोटो अपलोड करें",
+        "tab_demo": "🧪 डेमो लेबल",
+        "step_confirm_title": "चरण 1 · AI द्वारा पढ़े गए विवरण की पुष्टि करें",
+        "btn_confirm": "पुष्टि करें और जांचें",
+        "btn_retake": "दोबारा फोटो लें",
+        "cabinet_title": "मेरी दवा अलमारी (कैबिनेट)",
+        "cabinet_empty": "अभी तक कोई दवा सुरक्षित नहीं है। अपने कैबिनेट में जोड़ने के लिए ऊपर दवा स्कैन करें।",
+        "scan_another": "दूसरी दवा स्कैन करें",
+    },
+    "kn": {
+        "scan_title": "ಔಷಧಿ ಸ್ಕ್ಯಾನ್ ಮಾಡಿ",
+        "scan_caption": "ಬ್ಯಾಚ್ ಸಂಖ್ಯೆ (B.No.) ಇರುವ ಸ್ಟ್ರಿಪ್ ಅಥವಾ ಪ್ಯಾಕ್‌ನ ಭಾಗದ ಫೋಟೋ ತೆಗೆದುಕೊಳ್ಳಿ. ಕೇವಲ ಫೋಟೋ ಮಾತ್ರ AI ಗೆ ಕಳುಹಿಸಲಾಗುತ್ತದೆ ಮತ್ತು ತಕ್ಷಣವೇ ಅಳಿಸಲಾಗುತ್ತದೆ.",
+        "tab_camera": "📷 ಕ್ಯಾಮೆರಾ",
+        "tab_upload": "⬆️ ಫೋಟೋ ಅಪ್‌ಲೋಡ್ ಮಾಡಿ",
+        "tab_demo": "🧪 ಡೆಮೊ ಲೇಬಲ್‌ಗಳು",
+        "step_confirm_title": "ಹಂತ 1 · AI ಓದಿದ ವಿವರಗಳನ್ನು ದೃಢೀಕರಿಸಿ",
+        "btn_confirm": "ದೃಢೀಕರಿಸಿ ಮತ್ತು ಪರಿಶೀಲಿಸಿ",
+        "btn_retake": "ಮತ್ತೊಮ್ಮೆ ಫೋಟೋ ತೆಗೆದುಕೊಳ್ಳಿ",
+        "cabinet_title": "ನನ್ನ ಔಷಧಿ ಪೆಟ್ಟಿಗೆ (ಕ್ಯಾಬಿನೆಟ್)",
+        "cabinet_empty": "ಇನ್ನೂ ಏನೂ ಉಳಿಸಲಾಗಿಲ್ಲ. ನಿಮ್ಮ ಕ್ಯಾಬಿನೆಟ್‌ಗೆ ಸೇರಿಸಲು ಮೇಲೆ ಔಷಧಿಯನ್ನು ಸ್ಕ್ಯಾನ್ ಮಾಡಿ.",
+        "scan_another": "ಮತ್ತೊಂದು ಔಷಧಿಯನ್ನು ಸ್ಕ್ಯಾನ್ ಮಾಡಿ",
+    },
+}
+
 _BANNED = re.compile(r"\b(stop taking|safe to (take|use)|dose|dosage|you should take|discontinue)\b", re.I)
+
+
+def get_card_title(verdict: str, lang: str = "en") -> str:
+    """Return the localized card title for the given verdict."""
+    lang_dict = CARD_TITLES.get(lang, CARD_TITLES["en"])
+    return lang_dict.get(verdict, CARD_TITLES["en"].get(verdict, verdict))
+
+
+def get_ui_string(key: str, lang: str = "en") -> str:
+    """Return a localized UI string for the household flow."""
+    lang_dict = UI_STRINGS.get(lang, UI_STRINGS["en"])
+    return lang_dict.get(key, UI_STRINGS["en"].get(key, key))
 
 
 def get_verdict_summary(verdict: str, lang: str = "en") -> str:

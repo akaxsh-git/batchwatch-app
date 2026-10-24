@@ -1,5 +1,7 @@
 """Shared UI helpers for the Streamlit app."""
 import html
+import os
+from pathlib import Path
 
 import streamlit as st
 
@@ -9,9 +11,7 @@ from core import db, ingest
 
 # ---------------------------------------------------------------------------
 # Verdict colour tokens
-# Each entry: (pill_bg, pill_fg, card_border, card_bg_alpha_overlay)
-# We use the same pill colours in light and dark; the card backgrounds are
-# semi-transparent overlays applied via CSS rgba so they adapt to the theme.
+# High contrast in both light and dark themes.
 # ---------------------------------------------------------------------------
 COLORS = {
     "FLAGGED":  ("#DC2626", "#FFFFFF"),
@@ -20,7 +20,6 @@ COLORS = {
     "RETAKE":   ("#4B5563", "#FFFFFF"),
 }
 
-# Human-readable label for each verdict key used in the UI
 # Non-negotiable rule: verdict labels stay deterministic and unchanged in English.
 LABELS = {
     "FLAGGED": "FLAGGED",
@@ -29,7 +28,6 @@ LABELS = {
     "RETAKE": "UNREADABLE",
 }
 
-# Card left-border colours (visible on both themes)
 _CARD_BORDER = {
     "FLAGGED":  "#DC2626",
     "POSSIBLE": "#D97706",
@@ -37,8 +35,6 @@ _CARD_BORDER = {
     "RETAKE":   "#4B5563",
 }
 
-# Card background tint: a very low-opacity rgba that works on both dark and
-# light backgrounds because it blends with whatever the theme's base is.
 _CARD_TINT = {
     "FLAGGED":  "rgba(220, 38, 38, 0.08)",
     "POSSIBLE": "rgba(217, 119, 6, 0.08)",
@@ -47,23 +43,23 @@ _CARD_TINT = {
 }
 
 # ---------------------------------------------------------------------------
-# Global CSS — all colours reference CSS custom properties set by Streamlit
-# from the active theme, so they adapt to both light and dark.
+# Global CSS: Clean, clinical, professional design system
+# Works seamlessly in both dark and light modes.
 # ---------------------------------------------------------------------------
-CSS = """
+CSS_BASE = """
 <style>
-/* ── Page-width cap ───────────────────────────────────────────────────── */
+/* ── Page-width cap (1250px) ─────────────────────────────────────────── */
 .block-container {
     max-width: 1250px !important;
-    padding-top: 1.75rem !important;
-    padding-bottom: 3rem !important;
+    padding-top: 1.5rem !important;
+    padding-bottom: 2.5rem !important;
 }
 
 /* ── Verdict pill badge ───────────────────────────────────────────────── */
 .pill {
     display: inline-block;
     padding: 3px 12px;
-    border-radius: 14px;
+    border-radius: 9999px;
     font-weight: 700;
     font-size: 0.75rem;
     letter-spacing: 0.6px;
@@ -72,74 +68,197 @@ CSS = """
     line-height: 1.6;
 }
 
-/* ── Verdict card ─────────────────────────────────────────────────────── */
+/* ── Professional Verdict Card Layout ────────────────────────────────── */
 .vcard {
-    border-radius: 10px;
-    padding: 18px 22px 16px;
-    margin: 8px 0 16px;
-    border-width: 1px;
+    border-radius: 12px;
+    padding: 22px 24px 20px;
+    margin: 12px 0 20px;
+    border-width: 1.5px;
     border-style: solid;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
 }
 .vcard h3 {
-    margin: 6px 0 4px;
-    font-size: 1.05rem;
+    margin: 10px 0 6px;
+    font-size: 1.15rem;
     font-weight: 700;
-    color: var(--text-color);
+    letter-spacing: -0.2px;
 }
 .vcard-summary {
-    font-size: 0.88rem;
-    color: var(--text-color);
-    opacity: 0.90;
-    margin: 0 0 10px;
-    line-height: 1.5;
+    font-size: 0.94rem;
+    font-weight: 500;
+    line-height: 1.55;
+    margin: 0 0 14px;
 }
 
-/* ── Inline citation monospace chip ──────────────────────────────────── */
+/* ── Patient Explanation Block ───────────────────────────────────────── */
+.vcard-patient-box {
+    border-radius: 8px;
+    padding: 14px 16px;
+    margin: 12px 0;
+    line-height: 1.6;
+    font-size: 0.92rem;
+}
+.vcard-patient-box p {
+    margin: 0 0 8px;
+}
+.vcard-patient-box p:last-child {
+    margin-bottom: 0;
+}
+.vcard-advice {
+    font-weight: 600;
+    margin-top: 8px !important;
+}
+.vcard-disclaimer {
+    font-size: 0.78rem;
+    margin-top: 10px !important;
+    opacity: 0.75;
+}
+.vcard-notice-tag {
+    display: inline-block;
+    font-size: 0.75rem;
+    padding: 2px 8px;
+    border-radius: 4px;
+    margin-bottom: 8px;
+    font-style: italic;
+    opacity: 0.85;
+}
+
+/* ── Technical Regulatory Dossier Sub-Panel ──────────────────────────── */
+.vcard-tech-box {
+    border-radius: 8px;
+    padding: 14px 16px;
+    margin-top: 14px;
+    font-size: 0.86rem;
+    line-height: 1.55;
+}
+.vcard-tech-header {
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.8px;
+    text-transform: uppercase;
+    opacity: 0.65;
+    margin-bottom: 8px;
+}
+.vcard-tech-row {
+    margin: 4px 0;
+}
+
+/* ── Monospace citation chip ─────────────────────────────────────────── */
 .cite {
     font-family: ui-monospace, Menlo, "Cascadia Code", monospace;
     font-size: 0.80rem;
-    background: rgba(148, 163, 184, 0.15);
-    padding: 1px 7px;
+    padding: 2px 8px;
     border-radius: 5px;
-    border: 1px solid rgba(148, 163, 184, 0.2);
 }
 
-/* ── Muted / secondary text ──────────────────────────────────────────── */
+/* ── Muted text ───────────────────────────────────────────────────────── */
 .muted {
     opacity: 0.65;
     font-size: 0.82rem;
 }
 
-/* ── Agent trace step ─────────────────────────────────────────────────── */
+/* ── Agent step trace ─────────────────────────────────────────────────── */
 .step {
-    margin: 3px 0;
+    margin: 4px 0;
     font-size: 0.86rem;
     opacity: 0.85;
 }
 
-/* ── Empty-state callout ─────────────────────────────────────────────── */
+/* ── Clean Empty States ───────────────────────────────────────────────── */
 .empty-state {
     text-align: center;
-    padding: 2rem 1rem;
+    padding: 2.2rem 1.2rem;
     border-radius: 10px;
     border: 1px dashed rgba(148, 163, 184, 0.35);
-    color: var(--text-color);
-    opacity: 0.65;
-    margin: 1rem 0;
+    margin: 1.2rem 0;
 }
 .empty-state .es-icon {
     font-size: 2rem;
     display: block;
-    margin-bottom: 0.4rem;
+    margin-bottom: 0.5rem;
 }
 
-/* ── Mobile tweaks ───────────────────────────────────────────────────── */
+/* ── Responsive adjustments ───────────────────────────────────────────── */
 @media (max-width: 640px) {
-    .vcard { padding: 14px 14px 12px; }
+    .vcard { padding: 16px 16px 14px; }
     .block-container {
-        padding-left: 0.75rem !important;
-        padding-right: 0.75rem !important;
+        padding-left: 0.8rem !important;
+        padding-right: 0.8rem !important;
     }
+}
+</style>
+"""
+
+# Theme-specific color overrides injected dynamically based on toggle
+CSS_DARK = """
+<style>
+.vcard { color: #F8FAFC; }
+.vcard h3 { color: #F8FAFC; }
+.vcard-summary { color: #E2E8F0; }
+.vcard-patient-box {
+    background: rgba(15, 23, 42, 0.55);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    color: #F8FAFC;
+}
+.vcard-notice-tag {
+    background: rgba(217, 119, 6, 0.15);
+    color: #FBBF24;
+    border: 1px solid rgba(217, 119, 6, 0.3);
+}
+.vcard-tech-box {
+    background: rgba(15, 23, 42, 0.75);
+    border: 1px solid rgba(148, 163, 184, 0.18);
+    color: #CBD5E1;
+}
+.cite {
+    background: rgba(148, 163, 184, 0.15);
+    color: #93C5FD;
+    border: 1px solid rgba(148, 163, 184, 0.25);
+}
+.empty-state {
+    color: #94A3B8;
+    background: rgba(30, 41, 59, 0.25);
+}
+</style>
+"""
+
+CSS_LIGHT = """
+<style>
+/* Light mode overrides */
+.stApp {
+    background-color: #F8FAFC !important;
+    color: #0F172A !important;
+}
+.vcard {
+    background: #FFFFFF !important;
+    color: #0F172A !important;
+}
+.vcard h3 { color: #0F172A !important; }
+.vcard-summary { color: #334155 !important; }
+.vcard-patient-box {
+    background: #F1F5F9 !important;
+    border: 1px solid #E2E8F0 !important;
+    color: #0F172A !important;
+}
+.vcard-notice-tag {
+    background: #FEF3C7 !important;
+    color: #92400E !important;
+    border: 1px solid #FCD34D !important;
+}
+.vcard-tech-box {
+    background: #F8FAFC !important;
+    border: 1px solid #E2E8F0 !important;
+    color: #334155 !important;
+}
+.cite {
+    background: #E2E8F0 !important;
+    color: #1E3A8A !important;
+    border: 1px solid #CBD5E1 !important;
+}
+.empty-state {
+    color: #64748B !important;
+    background: #F8FAFC !important;
+    border-color: #CBD5E1 !important;
 }
 </style>
 """
@@ -150,8 +269,13 @@ CSS = """
 # ---------------------------------------------------------------------------
 
 def setup_page(title: str):
-    """Inject global CSS and render the page title."""
-    st.markdown(CSS, unsafe_allow_html=True)
+    """Inject global CSS and theme styling, then render page title."""
+    st.markdown(CSS_BASE, unsafe_allow_html=True)
+    theme = st.session_state.get("theme_pref", "🌙 Dark")
+    if "Light" in theme:
+        st.markdown(CSS_LIGHT, unsafe_allow_html=True)
+    else:
+        st.markdown(CSS_DARK, unsafe_allow_html=True)
     st.title(title)
 
 
@@ -161,8 +285,24 @@ def get_agent() -> Agent:
 
 
 def ensure_db():
+    """Initialize DB and automatically bootstrap on Streamlit Cloud if empty."""
     db.init_db()
     db.seed_users()
+
+    # Do not auto-bootstrap during automated test runs
+    if os.getenv("PYTEST_CURRENT_TEST"):
+        return
+
+    s = ingest.stats()
+    if not s.get("live_rows"):
+        admin = db.get_user("Priya (Compliance Admin)")
+        if admin:
+            from core.paths import ALERTS_DIR
+            for pdf in sorted(Path(ALERTS_DIR).glob("*.pdf")):
+                if pdf.name not in ingest.known_files():
+                    r = ingest.ingest_file(admin, pdf)
+                    if r.get("validation") == "passed":
+                        ingest.approve(admin, r["ingest_id"], run_recheck=False)
 
 
 def actor() -> dict:
@@ -183,7 +323,7 @@ def pill(verdict: str) -> str:
 
 
 def verdict_card(result: dict, explanation: dict = None):
-    """Render a styled verdict card with summary text, full detail, and multilingual explanation."""
+    """Render a clean, clinical-grade verdict card with separated patient and technical sections."""
     v = result["verdict"]
     top = result["matches"][0] if result.get("matches") else None
     lang = current_lang()
@@ -191,71 +331,70 @@ def verdict_card(result: dict, explanation: dict = None):
     border_col = _CARD_BORDER.get(v, "#64748B")
     tint = _CARD_TINT.get(v, "rgba(100,116,139,0.08)")
 
-    # Plain-language explanation under verdict title (multilingual)
-    summary = translate.get_verdict_summary(v, lang)
-
-    # Card heading text
-    title_text = {
-        "FLAGGED":  "This batch appears in a published CDSCO drug-quality alert",
-        "POSSIBLE": "Possible match — please check the batch number on the pack",
-        "CLEAR":    "Not found in published CDSCO alerts",
-        "RETAKE":   "Batch number could not be read",
-    }.get(v, v)
+    title_text = translate.get_card_title(v, lang)
+    summary_text = translate.get_verdict_summary(v, lang)
 
     body = ""
 
     if v == "FLAGGED" and top:
-        body += (
-            f"<p><b>{html.escape(top['product'])}</b> · "
-            f"batch <b>{html.escape(top['batch'])}</b> · "
-            f"{html.escape(top['alert_month'])} {top['list_type']} list · "
-            f"tested by {html.escape(top['tested_by'] or '')}</p>"
-        )
-
+        # ── 1. Patient Explanation Section
+        patient_content = ""
         if explanation:
             t_expl = translate.translate_explanation(top, explanation, lang)
-            body += (
-                f"<p>{html.escape(t_expl['text'])}</p>"
-                f"<p><b>{html.escape(t_expl['advice'])}</b></p>"
-            )
             if t_expl.get("notice"):
-                body += f"<p class='muted'><em>{html.escape(t_expl['notice'])}</em></p>"
+                patient_content += f"<span class='vcard-notice-tag'>{html.escape(t_expl['notice'])}</span>"
+            patient_content += f"<p>{html.escape(t_expl['text'])}</p>"
+            patient_content += f"<p class='vcard-advice'>{html.escape(t_expl['advice'])}</p>"
             if t_expl.get("disclaimer"):
-                body += (
-                    f"<p class='muted' style='font-size:0.78rem;'>"
-                    f"⚠️ {html.escape(t_expl['disclaimer'])}</p>"
-                )
+                patient_content += f"<p class='vcard-disclaimer'>⚠️ {html.escape(t_expl['disclaimer'])}</p>"
+        else:
+            patient_content += f"<p>{html.escape(summary_text)}</p>"
 
-        failure = (top["failure_reason"] or top.get("remarks") or "")[:300]
-        if failure:
-            prefix = "Lab finding (original English):" if lang != "en" else "Lab finding:"
-            body += f"<p class='muted'>{prefix} {html.escape(failure)}</p>"
+        body += f"<div class='vcard-patient-box'>{patient_content}</div>"
 
+        # ── 2. Technical Regulatory Dossier Sub-Panel
+        failure = (top.get("failure_reason") or top.get("remarks") or "")[:300]
+        alert_info = f"{html.escape(top.get('alert_month', ''))} {html.escape(top.get('list_type', ''))} list"
+        if top.get("tested_by"):
+            alert_info += f" · Tested by: {html.escape(top['tested_by'])}"
+
+        multi_flag = ""
         if result.get("times_flagged", 0) > 1:
-            body += (
-                f"<p>⚠️ This batch was flagged in "
-                f"<b>{result['times_flagged']}</b> separate alerts.</p>"
+            multi_flag = (
+                f"<div class='vcard-tech-row' style='color:#F59E0B;font-weight:600;'>"
+                f"⚠️ Note: This batch was flagged in {result['times_flagged']} separate CDSCO alerts.</div>"
             )
-        body += f"<p>Source: <span class='cite'>{html.escape(top['citation'])}</span></p>"
+
+        body += (
+            f"<div class='vcard-tech-box'>"
+            f"<div class='vcard-tech-header'>Official CDSCO Alert Dossier</div>"
+            f"<div class='vcard-tech-row'><b>Medicine / Product:</b> {html.escape(top.get('product', ''))}</div>"
+            f"<div class='vcard-tech-row'><b>Batch on alert:</b> <code>{html.escape(top.get('batch', ''))}</code></div>"
+            f"<div class='vcard-tech-row'><b>Alert record:</b> {alert_info}</div>"
+            f"<div class='vcard-tech-row'><b>Lab finding (original English):</b> {html.escape(failure)}</div>"
+            f"{multi_flag}"
+            f"<div class='vcard-tech-row' style='margin-top:6px;'><b>Source citation:</b> <span class='cite'>{html.escape(top.get('citation', ''))}</span></div>"
+            f"</div>"
+        )
 
     elif v == "POSSIBLE" and top:
         body += (
-            f"<p>Closest listed batch: <b>{html.escape(top['batch'])}</b> "
-            f"({html.escape(top['product'])}) · "
-            f"<span class='cite'>{html.escape(top['citation'])}</span></p>"
+            f"<div class='vcard-tech-box'>"
+            f"<div class='vcard-tech-header'>Closest Listed Batch</div>"
+            f"<div class='vcard-tech-row'><b>Listed batch:</b> <code>{html.escape(top['batch'])}</code> ({html.escape(top['product'])})</div>"
+            f"<div class='vcard-tech-row'><b>Alert source:</b> <span class='cite'>{html.escape(top['citation'])}</span></div>"
+            f"</div>"
         )
 
     elif v == "CLEAR":
         clear_text = translate.get_clear_details(lang)
-        body += f"<p>{html.escape(clear_text)}</p>"
+        body += f"<div class='vcard-patient-box'><p>{html.escape(clear_text)}</p></div>"
 
     card_html = (
-        f"<div class='vcard' style='"
-        f"border-color:{border_col};"
-        f"background:{tint}'>"
+        f"<div class='vcard' style='border-color:{border_col};background:{tint};'>"
         f"{pill(v)}"
         f"<h3>{html.escape(title_text)}</h3>"
-        f"<p class='vcard-summary'>{html.escape(summary)}</p>"
+        f"<p class='vcard-summary'>{html.escape(summary_text)}</p>"
         f"{body}"
         f"</div>"
     )
@@ -290,6 +429,8 @@ def sidebar():
         st.session_state["user"] = names[0]
     if "lang" not in st.session_state:
         st.session_state["lang"] = "en"
+    if "theme_pref" not in st.session_state:
+        st.session_state["theme_pref"] = "🌙 Dark"
 
     with st.sidebar:
         st.markdown("### 💊 BatchWatch")
@@ -308,6 +449,13 @@ def sidebar():
             list(translate.LANGUAGES.keys()),
             key="lang",
             format_func=lambda code: translate.LANGUAGES[code],
+        )
+
+        st.radio(
+            "Theme / थीम",
+            ["🌙 Dark", "☀️ Light"],
+            key="theme_pref",
+            horizontal=True,
         )
 
         s = ingest.stats()

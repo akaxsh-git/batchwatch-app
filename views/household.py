@@ -4,16 +4,16 @@ from pathlib import Path
 import streamlit as st
 
 import ui
+from agent import translate
 from core import cabinet
 from core.paths import DEMO_DIR
 
-ui.setup_page("Scan a medicine")
 a = ui.actor()
 agent = ui.get_agent()
-st.caption(
-    "Photograph the side of the strip or carton that shows the batch number (B.No.). "
-    "Only the photo is sent to the AI, never your name, and it is discarded after reading."
-)
+lang = ui.current_lang()
+
+ui.setup_page(translate.get_ui_string("scan_title", lang))
+st.caption(translate.get_ui_string("scan_caption", lang))
 
 S = st.session_state
 S.setdefault("h_attempt", 1)
@@ -33,15 +33,22 @@ def resume(payload):
     S["h_run"] = agent.run("household", S["h_thread"], resume=payload)
 
 
-tab1, tab2, tab3 = st.tabs(["📷 Camera", "⬆️ Upload photo", "🧪 Demo labels"])
+tab1, tab2, tab3 = st.tabs([
+    translate.get_ui_string("tab_camera", lang),
+    translate.get_ui_string("tab_upload", lang),
+    translate.get_ui_string("tab_demo", lang),
+])
+
 with tab1:
     cam = st.camera_input("Take a photo")
     if cam and st.button("Check this photo", key="cam_go", type="primary"):
         start(cam.getvalue(), "camera.jpg"); st.rerun()
+
 with tab2:
     up = st.file_uploader("Photo of the strip", type=["jpg", "jpeg", "png"])
     if up and st.button("Check this photo", key="up_go", type="primary"):
         start(up.getvalue(), up.name); st.rerun()
+
 with tab3:
     demo = sorted((Path(DEMO_DIR) / "labels").glob("*.jpg"))
     if not demo:
@@ -63,7 +70,7 @@ if run:
     with right:
         if wait and wait["type"] == "confirm_batch":
             f, c = wait["fields"], wait["confidence"]
-            st.subheader("Step 1 · Confirm what the AI read")
+            st.subheader(translate.get_ui_string("step_confirm_title", lang))
             (st.warning if wait["low_confidence"] else st.info)(wait["message"])
             with st.form("confirm"):
                 batch = st.text_input(
@@ -76,8 +83,8 @@ if run:
                 maker = st.text_input("Manufacturer", value=f.get("manufacturer") or "")
                 expiry = st.text_input("Expiry", value=f.get("expiry_date") or "")
                 b1, b2 = st.columns(2)
-                ok = b1.form_submit_button("Confirm and check", type="primary")
-                retake = b2.form_submit_button("Retake photo")
+                ok = b1.form_submit_button(translate.get_ui_string("btn_confirm", lang), type="primary")
+                retake = b2.form_submit_button(translate.get_ui_string("btn_retake", lang))
             if ok and batch.strip():
                 resume({"action": "confirm", "batch": batch, "product": product,
                         "manufacturer": maker, "expiry": expiry})
@@ -137,7 +144,7 @@ if run:
                 "Saved to your medicine cabinet. "
                 "We'll re-check it automatically when new alerts are published."
             )
-            if st.button("Scan another medicine"):
+            if st.button(translate.get_ui_string("scan_another", lang)):
                 for k in ("h_run", "h_image", "h_thread"):
                     S.pop(k, None)
                 S["h_attempt"] = 1; st.rerun()
@@ -145,12 +152,12 @@ if run:
 
 # ── Medicine cabinet ──────────────────────────────────────────────────────────
 st.divider()
-st.subheader("My medicine cabinet")
+st.subheader(translate.get_ui_string("cabinet_title", lang))
 items = cabinet.list_items(a)
 if not items:
     ui.empty_state(
         "💊",
-        "Nothing saved yet. Scan a medicine above to add it to your cabinet.",
+        translate.get_ui_string("cabinet_empty", lang),
     )
 for it in items:
     c1, c2 = st.columns([6, 1])

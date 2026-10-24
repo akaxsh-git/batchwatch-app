@@ -23,20 +23,45 @@ from dotenv import load_dotenv
 from core.paths import DEMO_DIR
 
 load_dotenv()
-MODEL = os.getenv("GEMINI_MODEL", "gemini-2.5-flash")
+
+
+def get_api_key() -> str:
+    """Retrieve Gemini API key from Streamlit secrets (Cloud) or environment variable."""
+    try:
+        import streamlit as st
+        if hasattr(st, "secrets") and "GEMINI_API_KEY" in st.secrets:
+            return str(st.secrets["GEMINI_API_KEY"]).strip()
+    except Exception:
+        pass
+    return os.getenv("GEMINI_API_KEY", "").strip()
+
+
+def get_model() -> str:
+    """Retrieve Gemini model name from Streamlit secrets or environment variable."""
+    try:
+        import streamlit as st
+        if hasattr(st, "secrets") and "GEMINI_MODEL" in st.secrets:
+            return str(st.secrets["GEMINI_MODEL"]).strip()
+    except Exception:
+        pass
+    return os.getenv("GEMINI_MODEL", "gemini-2.5-flash").strip()
+
+
+MODEL = get_model()
 _FIELDS = ["brand_name", "generic_name", "manufacturer", "batch_number", "expiry_date"]
 _BANNED = re.compile(r"\b(stop taking|safe to (take|use)|dose|dosage|you should take|discontinue)\b", re.I)
 
 
 def mode() -> str:
-    if os.getenv("BATCHWATCH_OFFLINE") == "1" or not os.getenv("GEMINI_API_KEY"):
+    if os.getenv("BATCHWATCH_OFFLINE") == "1" or not get_api_key():
         return "offline"
     return "gemini"
 
 
 def _client():
     from google import genai
-    return genai.Client()
+    key = get_api_key()
+    return genai.Client(api_key=key) if key else genai.Client()
 
 
 def _gemini_json(parts, schema_hint: str) -> dict:
