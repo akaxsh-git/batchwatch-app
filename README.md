@@ -123,6 +123,7 @@ CDSCO tables are drawn as shaded cell rectangles. The parser groups rectangles s
 | **Human approval** | Admin approves new data · user confirms the batch read · POSSIBLE needs a person · returns and reports sent only after approval |
 | **Audit trail** | `audit_log` table: every tool call, AI reading, human decision, re-check and denied attempt. Exportable CSV |
 | **Role-based access** | `core/auth.py`, enforced in the backend: admin / pharmacist (own org only) / household (own data only) / system |
+| **Authentication note** | Landing page role picker is for demonstration; production deployments require enterprise SSO (OAuth 2.0 / SAML) or hashed credentials. Backend RBAC is strictly enforced. |
 | **Privacy & security** | Only the label image goes to the LLM (no names or inventories); photos dropped after reading; keys only in `.env` (git-ignored). Production: Gemini paid tier, where inputs aren't used for training |
 | **Fail-safe wording** | "Not in published alerts", never "safe"; "speak to your pharmacist or doctor", never "stop taking"; LLM output containing dosing or stop/continue advice is replaced by the rule-based text |
 

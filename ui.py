@@ -365,26 +365,46 @@ def empty_state(icon: str, message: str):
     )
 
 
+def login(user_name: str):
+    """Sign in as a demo persona, write to audit log, and rerun."""
+    u = db.get_user(user_name)
+    st.session_state["user"] = user_name
+    from core import audit
+    audit.log(u, "auth:login", status="ok", output={"role": u["role"], "org": u.get("org")})
+    st.rerun()
+
+
+def logout():
+    """Sign out the current user, write to audit log, and return to landing page."""
+    a = actor()
+    if a:
+        from core import audit
+        audit.log(a, "auth:logout", status="ok", output={"role": a["role"], "org": a.get("org")})
+    st.session_state.pop("user", None)
+    st.rerun()
+
+
 def sidebar():
-    users = db.list_users()
-    names = [u["name"] for u in users]
-    if "user" not in st.session_state:
-        st.session_state["user"] = names[0]
     if "lang" not in st.session_state:
         st.session_state["lang"] = "en"
+    a = actor()
+    if not a:
+        return None
 
     with st.sidebar:
         st.markdown("### 💊 BatchWatch")
         st.caption("Agentic compliance for CDSCO drug-quality alerts")
 
-        st.selectbox(
-            "Signed in as (demo)", names, key="user",
-            format_func=lambda n: f"{n} · {next(u['role'] for u in users if u['name'] == n)}",
+        # Current user badge and switch user button (replacing old dropdown)
+        st.markdown(f"**Signed in as:**  \n**{html.escape(a['name'])}**")
+        st.markdown(
+            f"{pill(a['role'])} " + (f"· <span class='muted'>{html.escape(a['org'])}</span>" if a.get("org") else ""),
+            unsafe_allow_html=True,
         )
-        a = actor()
-        if a.get("org"):
-            st.caption(f"Organisation: **{a['org']}**")
+        if st.button("🔄 Switch user / Sign out", use_container_width=True):
+            logout()
 
+        st.divider()
         st.selectbox(
             "Language / भाषा / ಭಾಷೆ",
             list(translate.LANGUAGES.keys()),
@@ -393,7 +413,6 @@ def sidebar():
         )
 
         s = ingest.stats()
-        st.divider()
         st.caption(
             f"**Live alert data:** {s['live_rows'] or 0} batches · "
             f"{s['first'] or '–'} → {s['last'] or '–'}"
