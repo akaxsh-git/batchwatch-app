@@ -2,7 +2,7 @@
 
 **An agent that checks pharmacy stock and household medicines against India's monthly drug-quality alerts, then acts, reports and keeps watching.**
 
-AgentOps 2026 · Team **2B or Not 2B** (HX-2KCF) · Akash Ghosh & Sahil Das
+AgentOps 2026 · Team **2B or Not 2B** (HX-2KCF) · Akash Ghosh
 CGI business domain: **Healthcare / Life Sciences** · Track 04: Agents for Sustainable Development (SDG 3.8)
 
 ---
