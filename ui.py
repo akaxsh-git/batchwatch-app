@@ -20,6 +20,13 @@ CSS = """
 .muted{color:#7A665A}
 .step{margin:2px 0}
 .block-container{max-width:1250px;padding-top:2rem}
+@media (max-width: 640px){
+  .block-container{padding:1rem .8rem 3rem}
+  h1{font-size:1.6rem !important}
+  .card{padding:12px 12px}
+  .stButton>button, .stDownloadButton>button{width:100%;min-height:2.8rem}
+  [data-testid="stFileUploaderDropzone"]{padding:.8rem}
+}
 </style>
 """
 
@@ -34,9 +41,27 @@ def get_agent() -> Agent:
     return Agent()
 
 
+@st.cache_resource(show_spinner="First start: loading the CDSCO alert files (about 30 seconds)...")
+def _bootstrap_alerts():
+    """On a fresh server (e.g. a hosted deploy) there is no database yet: build it from data/alerts."""
+    from pathlib import Path
+    from core.paths import ALERTS_DIR
+    admin = db.get_user("Priya (Compliance Admin)")
+    for pdf in sorted(Path(ALERTS_DIR).glob("*.pdf")):
+        if pdf.name in ingest.known_files():
+            continue
+        r = ingest.ingest_file(admin, pdf)
+        if r["validation"] == "passed":
+            ingest.approve(admin, r["ingest_id"], run_recheck=False)
+    return True
+
+
 def ensure_db():
     db.init_db()
     db.seed_users()
+    if ingest.stats()["live_rows"] == 0:
+        _bootstrap_alerts.clear()
+    _bootstrap_alerts()
 
 
 def actor() -> dict:

@@ -28,15 +28,16 @@ def resume(payload):
     S["h_run"] = agent.run("household", S["h_thread"], resume=payload)
 
 
-tab1, tab2, tab3 = st.tabs(["📷 Camera", "⬆️ Upload photo", "🧪 Demo labels"])
+tab1, tab2, tab3 = st.tabs(["📷 Take / upload photo", "🤳 Camera", "🧪 Demo labels"])
 with tab1:
-    cam = st.camera_input("Take a photo")
-    if cam and st.button("Check this photo", key="cam_go", type="primary"):
-        start(cam.getvalue(), "camera.jpg"); st.rerun()
-with tab2:
+    st.caption("On a phone this opens your camera or photo library.")
     up = st.file_uploader("Photo of the strip", type=["jpg", "jpeg", "png"])
     if up and st.button("Check this photo", key="up_go", type="primary"):
         start(up.getvalue(), up.name); st.rerun()
+with tab2:
+    cam = st.camera_input("Take a photo")
+    if cam and st.button("Check this photo", key="cam_go", type="primary"):
+        start(cam.getvalue(), "camera.jpg"); st.rerun()
 with tab3:
     demo = sorted((Path(DEMO_DIR) / "labels").glob("*.jpg"))
     cols = st.columns(len(demo) or 1)
