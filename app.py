@@ -10,7 +10,9 @@ import streamlit as st
 
 st.set_page_config(page_title="BatchWatch", page_icon="💊", layout="wide")
 
+import importlib
 import ui  # noqa: E402
+importlib.reload(ui)
 
 ui.ensure_db()
 a = ui.actor()
