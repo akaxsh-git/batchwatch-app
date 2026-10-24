@@ -44,9 +44,10 @@ _CARD_TINT = {
 
 # ---------------------------------------------------------------------------
 # Global CSS: Clean, clinical, professional design system
-# Works seamlessly in both dark and light modes.
+# Uses Streamlit's official CSS custom properties (var(--text-color), etc.)
+# so that all cards, chips, and text adapt cleanly to both Light and Dark themes.
 # ---------------------------------------------------------------------------
-CSS_BASE = """
+CSS = """
 <style>
 /* ── Page-width cap (1250px) ─────────────────────────────────────────── */
 .block-container {
@@ -75,19 +76,23 @@ CSS_BASE = """
     margin: 12px 0 20px;
     border-width: 1.5px;
     border-style: solid;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    color: var(--text-color);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
 }
 .vcard h3 {
     margin: 10px 0 6px;
     font-size: 1.15rem;
     font-weight: 700;
     letter-spacing: -0.2px;
+    color: var(--text-color);
 }
 .vcard-summary {
     font-size: 0.94rem;
     font-weight: 500;
     line-height: 1.55;
     margin: 0 0 14px;
+    color: var(--text-color);
+    opacity: 0.95;
 }
 
 /* ── Patient Explanation Block ───────────────────────────────────────── */
@@ -97,6 +102,9 @@ CSS_BASE = """
     margin: 12px 0;
     line-height: 1.6;
     font-size: 0.92rem;
+    background: rgba(148, 163, 184, 0.08);
+    border: 1px solid rgba(148, 163, 184, 0.2);
+    color: var(--text-color);
 }
 .vcard-patient-box p {
     margin: 0 0 8px;
@@ -120,7 +128,9 @@ CSS_BASE = """
     border-radius: 4px;
     margin-bottom: 8px;
     font-style: italic;
-    opacity: 0.85;
+    background: rgba(217, 119, 6, 0.15);
+    color: #D97706;
+    border: 1px solid rgba(217, 119, 6, 0.3);
 }
 
 /* ── Technical Regulatory Dossier Sub-Panel ──────────────────────────── */
@@ -130,17 +140,22 @@ CSS_BASE = """
     margin-top: 14px;
     font-size: 0.86rem;
     line-height: 1.55;
+    background: rgba(148, 163, 184, 0.06);
+    border: 1px solid rgba(148, 163, 184, 0.2);
+    color: var(--text-color);
 }
 .vcard-tech-header {
     font-size: 0.72rem;
     font-weight: 700;
     letter-spacing: 0.8px;
     text-transform: uppercase;
-    opacity: 0.65;
+    opacity: 0.70;
     margin-bottom: 8px;
+    color: var(--text-color);
 }
 .vcard-tech-row {
     margin: 4px 0;
+    color: var(--text-color);
 }
 
 /* ── Monospace citation chip ─────────────────────────────────────────── */
@@ -149,12 +164,16 @@ CSS_BASE = """
     font-size: 0.80rem;
     padding: 2px 8px;
     border-radius: 5px;
+    background: rgba(148, 163, 184, 0.15);
+    color: var(--text-color);
+    border: 1px solid rgba(148, 163, 184, 0.25);
 }
 
 /* ── Muted text ───────────────────────────────────────────────────────── */
 .muted {
-    opacity: 0.65;
+    opacity: 0.70;
     font-size: 0.82rem;
+    color: var(--text-color);
 }
 
 /* ── Agent step trace ─────────────────────────────────────────────────── */
@@ -162,6 +181,7 @@ CSS_BASE = """
     margin: 4px 0;
     font-size: 0.86rem;
     opacity: 0.85;
+    color: var(--text-color);
 }
 
 /* ── Clean Empty States ───────────────────────────────────────────────── */
@@ -171,6 +191,8 @@ CSS_BASE = """
     border-radius: 10px;
     border: 1px dashed rgba(148, 163, 184, 0.35);
     margin: 1.2rem 0;
+    color: var(--text-color);
+    opacity: 0.75;
 }
 .empty-state .es-icon {
     font-size: 2rem;
@@ -189,93 +211,14 @@ CSS_BASE = """
 </style>
 """
 
-# Theme-specific color overrides injected dynamically based on toggle
-CSS_DARK = """
-<style>
-.vcard { color: #F8FAFC; }
-.vcard h3 { color: #F8FAFC; }
-.vcard-summary { color: #E2E8F0; }
-.vcard-patient-box {
-    background: rgba(15, 23, 42, 0.55);
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    color: #F8FAFC;
-}
-.vcard-notice-tag {
-    background: rgba(217, 119, 6, 0.15);
-    color: #FBBF24;
-    border: 1px solid rgba(217, 119, 6, 0.3);
-}
-.vcard-tech-box {
-    background: rgba(15, 23, 42, 0.75);
-    border: 1px solid rgba(148, 163, 184, 0.18);
-    color: #CBD5E1;
-}
-.cite {
-    background: rgba(148, 163, 184, 0.15);
-    color: #93C5FD;
-    border: 1px solid rgba(148, 163, 184, 0.25);
-}
-.empty-state {
-    color: #94A3B8;
-    background: rgba(30, 41, 59, 0.25);
-}
-</style>
-"""
-
-CSS_LIGHT = """
-<style>
-/* Light mode overrides */
-.stApp {
-    background-color: #F8FAFC !important;
-    color: #0F172A !important;
-}
-.vcard {
-    background: #FFFFFF !important;
-    color: #0F172A !important;
-}
-.vcard h3 { color: #0F172A !important; }
-.vcard-summary { color: #334155 !important; }
-.vcard-patient-box {
-    background: #F1F5F9 !important;
-    border: 1px solid #E2E8F0 !important;
-    color: #0F172A !important;
-}
-.vcard-notice-tag {
-    background: #FEF3C7 !important;
-    color: #92400E !important;
-    border: 1px solid #FCD34D !important;
-}
-.vcard-tech-box {
-    background: #F8FAFC !important;
-    border: 1px solid #E2E8F0 !important;
-    color: #334155 !important;
-}
-.cite {
-    background: #E2E8F0 !important;
-    color: #1E3A8A !important;
-    border: 1px solid #CBD5E1 !important;
-}
-.empty-state {
-    color: #64748B !important;
-    background: #F8FAFC !important;
-    border-color: #CBD5E1 !important;
-}
-</style>
-"""
-
 
 # ---------------------------------------------------------------------------
 # Public helpers
 # ---------------------------------------------------------------------------
 
 def setup_page(title: str):
-    """Inject global CSS and theme styling, then render page title."""
-    st.markdown(CSS_BASE, unsafe_allow_html=True)
-    theme = st.session_state.get("theme_pref", "🌙 Dark")
-    if "Light" in theme:
-        st.markdown(CSS_LIGHT, unsafe_allow_html=True)
-    else:
-        st.markdown(CSS_DARK, unsafe_allow_html=True)
+    """Inject global theme-adaptive CSS and render page title."""
+    st.markdown(CSS, unsafe_allow_html=True)
     st.title(title)
 
 
@@ -429,8 +372,6 @@ def sidebar():
         st.session_state["user"] = names[0]
     if "lang" not in st.session_state:
         st.session_state["lang"] = "en"
-    if "theme_pref" not in st.session_state:
-        st.session_state["theme_pref"] = "🌙 Dark"
 
     with st.sidebar:
         st.markdown("### 💊 BatchWatch")
@@ -449,13 +390,6 @@ def sidebar():
             list(translate.LANGUAGES.keys()),
             key="lang",
             format_func=lambda code: translate.LANGUAGES[code],
-        )
-
-        st.radio(
-            "Theme / थीम",
-            ["🌙 Dark", "☀️ Light"],
-            key="theme_pref",
-            horizontal=True,
         )
 
         s = ingest.stats()
