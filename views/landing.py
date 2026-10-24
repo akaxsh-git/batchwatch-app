@@ -19,6 +19,19 @@ def do_login(user_name: str):
 
 # Page header
 ui.setup_page("💊 BatchWatch")
+
+# Ensure sidebar and collapse chevron are 100% hidden on the landing page
+st.markdown(
+    """
+    <style>
+    section[data-testid="stSidebar"], [data-testid="collapsedControl"] {
+        display: none !important;
+    }
+    </style>
+    """,
+    unsafe_allow_html=True,
+)
+
 st.markdown(
     "#### Autonomous compliance & drug-quality alert checking for India"
 )

@@ -11,11 +11,11 @@ PERMISSIONS = {
     },
     "pharmacist": {
         "check_stock", "quarantine", "draft_supplier_return", "decide_own_actions",
-        "view_org_audit", "compliance_report_org", "view_alerts",
+        "view_org_audit", "compliance_report_org", "view_alerts", "batch_search",
     },
     "household": {
         "scan_label", "manage_cabinet", "draft_controller_report", "decide_own_actions",
-        "view_own_audit",
+        "view_own_audit", "batch_search",
     },
     # the agent itself, when it acts on a schedule (monthly re-check)
     "system": {"recheck", "notify", "ingest_alerts"},

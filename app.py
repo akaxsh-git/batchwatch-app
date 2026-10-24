@@ -34,11 +34,13 @@ else:
         "pharmacist": [
             home,
             st.Page("views/pharmacy.py", title="Stock check", icon="🏥"),
+            st.Page("views/search.py", title="Batch search", icon="🔍"),
             st.Page("views/audit.py", title="Audit & reports", icon="🧾"),
         ],
         "household": [
             home,
             st.Page("views/household.py", title="Scan a medicine", icon="📷"),
+            st.Page("views/search.py", title="Batch search", icon="🔍"),
             st.Page("views/audit.py", title="My activity log", icon="🧾"),
         ],
     }
