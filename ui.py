@@ -19,6 +19,7 @@ CSS = """
 .cite{font-family:ui-monospace,Menlo,monospace;font-size:0.82rem;background:#F1E7DA;padding:1px 6px;border-radius:4px}
 .muted{color:#7A665A}
 .step{margin:2px 0}
+.block-container{max-width:1250px;padding-top:2rem}
 </style>
 """
 
