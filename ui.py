@@ -3,7 +3,7 @@ import html
 
 import streamlit as st
 
-from agent import llm
+from agent import llm, translate
 from agent.graphs import Agent
 from core import db, ingest
 
@@ -21,32 +21,12 @@ COLORS = {
 }
 
 # Human-readable label for each verdict key used in the UI
+# Non-negotiable rule: verdict labels stay deterministic and unchanged in English.
 LABELS = {
     "FLAGGED": "FLAGGED",
     "POSSIBLE": "POSSIBLE",
     "CLEAR": "NOT IN ALERTS",
     "RETAKE": "UNREADABLE",
-}
-
-# One-line plain-English summary shown directly under every verdict heading.
-# Never uses the word "safe". Never says "stop" or "continue" any medicine.
-VERDICT_SUMMARY = {
-    "FLAGGED": (
-        "This batch matches a published CDSCO drug-quality alert. "
-        "Do not dispense or use — quarantine the batch and check with a pharmacist or doctor."
-    ),
-    "POSSIBLE": (
-        "Close match to a published alert — OCR uncertainty or batch found on a different product. "
-        "Please physically check the batch number on the pack before any action."
-    ),
-    "CLEAR": (
-        "No published CDSCO alert lists this batch. "
-        "This is not a certificate of quality: only sampled batches are tested."
-    ),
-    "RETAKE": (
-        "Batch number could not be read clearly. "
-        "Please retake the photo in good, even light with the batch area in focus."
-    ),
 }
 
 # Card left-border colours (visible on both themes)
@@ -109,7 +89,7 @@ CSS = """
 .vcard-summary {
     font-size: 0.88rem;
     color: var(--text-color);
-    opacity: 0.85;
+    opacity: 0.90;
     margin: 0 0 10px;
     line-height: 1.5;
 }
@@ -126,7 +106,7 @@ CSS = """
 
 /* ── Muted / secondary text ──────────────────────────────────────────── */
 .muted {
-    opacity: 0.6;
+    opacity: 0.65;
     font-size: 0.82rem;
 }
 
@@ -190,6 +170,11 @@ def actor() -> dict:
     return db.get_user(name) if name else None
 
 
+def current_lang() -> str:
+    """Return the currently selected language code (en, hi, kn)."""
+    return st.session_state.get("lang", "en")
+
+
 def pill(verdict: str) -> str:
     """Return an HTML pill badge for a verdict key."""
     bg, fg = COLORS.get(verdict, ("#64748B", "#fff"))
@@ -198,15 +183,18 @@ def pill(verdict: str) -> str:
 
 
 def verdict_card(result: dict, explanation: dict = None):
-    """Render a styled verdict card with summary text and full detail."""
+    """Render a styled verdict card with summary text, full detail, and multilingual explanation."""
     v = result["verdict"]
     top = result["matches"][0] if result.get("matches") else None
+    lang = current_lang()
 
     border_col = _CARD_BORDER.get(v, "#64748B")
     tint = _CARD_TINT.get(v, "rgba(100,116,139,0.08)")
-    summary = VERDICT_SUMMARY.get(v, "")
 
-    # Card heading text (not the pill label — a sentence that states what happened)
+    # Plain-language explanation under verdict title (multilingual)
+    summary = translate.get_verdict_summary(v, lang)
+
+    # Card heading text
     title_text = {
         "FLAGGED":  "This batch appears in a published CDSCO drug-quality alert",
         "POSSIBLE": "Possible match — please check the batch number on the pack",
@@ -223,14 +211,26 @@ def verdict_card(result: dict, explanation: dict = None):
             f"{html.escape(top['alert_month'])} {top['list_type']} list · "
             f"tested by {html.escape(top['tested_by'] or '')}</p>"
         )
+
         if explanation:
+            t_expl = translate.translate_explanation(top, explanation, lang)
             body += (
-                f"<p>{html.escape(explanation['text'])}</p>"
-                f"<p><b>{html.escape(explanation['advice'])}</b></p>"
+                f"<p>{html.escape(t_expl['text'])}</p>"
+                f"<p><b>{html.escape(t_expl['advice'])}</b></p>"
             )
+            if t_expl.get("notice"):
+                body += f"<p class='muted'><em>{html.escape(t_expl['notice'])}</em></p>"
+            if t_expl.get("disclaimer"):
+                body += (
+                    f"<p class='muted' style='font-size:0.78rem;'>"
+                    f"⚠️ {html.escape(t_expl['disclaimer'])}</p>"
+                )
+
         failure = (top["failure_reason"] or top.get("remarks") or "")[:300]
         if failure:
-            body += f"<p class='muted'>Lab finding: {html.escape(failure)}</p>"
+            prefix = "Lab finding (original English):" if lang != "en" else "Lab finding:"
+            body += f"<p class='muted'>{prefix} {html.escape(failure)}</p>"
+
         if result.get("times_flagged", 0) > 1:
             body += (
                 f"<p>⚠️ This batch was flagged in "
@@ -246,10 +246,8 @@ def verdict_card(result: dict, explanation: dict = None):
         )
 
     elif v == "CLEAR":
-        body += (
-            "<p>No published alert lists this batch. "
-            "We'll re-check automatically when new alerts are published.</p>"
-        )
+        clear_text = translate.get_clear_details(lang)
+        body += f"<p>{html.escape(clear_text)}</p>"
 
     card_html = (
         f"<div class='vcard' style='"
@@ -290,9 +288,13 @@ def sidebar():
     names = [u["name"] for u in users]
     if "user" not in st.session_state:
         st.session_state["user"] = names[0]
+    if "lang" not in st.session_state:
+        st.session_state["lang"] = "en"
+
     with st.sidebar:
         st.markdown("### 💊 BatchWatch")
         st.caption("Agentic compliance for CDSCO drug-quality alerts")
+
         st.selectbox(
             "Signed in as (demo)", names, key="user",
             format_func=lambda n: f"{n} · {next(u['role'] for u in users if u['name'] == n)}",
@@ -300,6 +302,14 @@ def sidebar():
         a = actor()
         if a.get("org"):
             st.caption(f"Organisation: **{a['org']}**")
+
+        st.selectbox(
+            "Language / भाषा / ಭಾಷೆ",
+            list(translate.LANGUAGES.keys()),
+            key="lang",
+            format_func=lambda code: translate.LANGUAGES[code],
+        )
+
         s = ingest.stats()
         st.divider()
         st.caption(
